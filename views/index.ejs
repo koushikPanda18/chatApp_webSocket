@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chatApp</title>
+</head>
+
+<body>
+    <h1>Chatting.... Inside <%= roomid %> </h1>
+    <ul id="messages"></ul>
+    <form id="form" action="">
+        <input id="input" autocomplete="off" /><button>Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+        var form = document.getElementById('form');
+        var input = document.getElementById('input');
+        
+         socket.emit('join_room', {
+             roomid: '<%= roomid %>',
+             userid:'<%= user %>'
+         });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            if (input.value) {
+                socket.emit('client-message', 
+                {msg:input.value,
+                 roomid:'<%= roomid %>',
+                 user:'<% user %>'});
+                 input.value = '';
+            }
+        });
+        // const ip=document.getElementById("chatBox")
+        // console.log(ip.value);
+        // socket.emit('client-message',"hi");
+        // ip.value = '';
+
+    socket.on('chat_message', (data) => {
+    const item = document.createElement('li');
+    item.textContent = data.msg;
+    messages.appendChild(item);
+    window.scrollTo(0, document.body.scrollHeight);
+  });
+
+    </script>
+</body>
+
+</html>
